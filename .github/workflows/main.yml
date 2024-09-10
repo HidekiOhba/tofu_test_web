@@ -38,13 +38,13 @@ jobs:
 
       - name: Download task definition
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.TASK_DEFINITION_FAMILY }} --query taskDefinition > aws/task-definition.json
+          aws ecs describe-task-definition --task-definition ${{ env.TASK_DEFINITION_FAMILY }} --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: aws/task-definition.json
+          task-definition: task-definition.json
           container-name: ${{ env.ECS_CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
@@ -54,6 +54,7 @@ jobs:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           service: ${{ env.ECS_SERVICE }}
           cluster: ${{ env.ECS_CLUSTER }}
-          codedeploy-appspec: aws/appspec.yaml
-          codedeploy-application: ecs
+          codedeploy-appspec: appspec.yaml
+          codedeploy-application: ${{ env.ECS_APPLICATION_NAME }}
           codedeploy-deployment-group: ${{ env.ECS_DEPLOYMENT_GROUP }}
+          wait-for-service-stability: true
