@@ -3,6 +3,7 @@ name: Push docker images and deploy to ECS
 on:
   push:
     branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
